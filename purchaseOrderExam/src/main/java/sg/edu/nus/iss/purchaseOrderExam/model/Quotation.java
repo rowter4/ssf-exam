@@ -26,4 +26,10 @@ public class Quotation {
     public Float getQuotation(String item) { return this.quotations.getOrDefault((Object)item, -1000000f); }
 
 
+    public static String create(JsonObject o) {
+        String quoteId = new String();
+        quoteId = o.getString("quoteId");
+        // quote.quotations = o.getString("quotations");
+        return quoteId;
+    }
 }

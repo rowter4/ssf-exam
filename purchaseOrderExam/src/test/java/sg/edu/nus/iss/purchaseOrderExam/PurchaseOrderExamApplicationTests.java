@@ -1,5 +1,7 @@
 package sg.edu.nus.iss.purchaseOrderExam;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
@@ -13,6 +15,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 import sg.edu.nus.iss.purchaseOrderExam.model.Quotation;
 import sg.edu.nus.iss.purchaseOrderExam.service.QuotationService;
 
@@ -30,24 +34,40 @@ class PurchaseOrderExamApplicationTests {
 
 	@Test
 	void contextLoads() {
-		// Optional<Quotation> quote = quoteSvc.getQuotations("");
-		// Assertions.assertTrue(quote.isPresent());
+
+		List<String> items2 = new LinkedList<>();
+		items2.add("durian");
+		items2.add("plum");
+		items2.add("pear");
+		
+		Optional<Quotation> quote = quoteSvc.getQuotations(items2);
+		Assertions.assertTrue(quote.isPresent());
 	}
 
 	@Test
 	void shouldReturnList() throws Exception {
 
-		RequestBuilder req = MockMvcRequestBuilders.get("/invoice")
-				.queryParam("lineItems")
-				.accept(MediaType.APPLICATION_JSON);
+		JsonObject payload = Json.createObjectBuilder()
+			.add("name", "Michael Scott") 
+			.add("address", "21 Bedok Road") 
+			.add("email", "abcde@gmail.com") 
+			.build();
+
+
+		RequestBuilder req = MockMvcRequestBuilders.post("/api")
+													.header("User-Agent", "junit")
+													.accept(MediaType.APPLICATION_JSON)
+													.contentType(MediaType.APPLICATION_JSON)
+													.content(payload.toString());
+
 
 		MvcResult result = mvc.perform(req).andReturn();
 		int status = result.getResponse().getStatus();
 
-		String payload = result.getResponse().getContentAsString();
+		String response = result.getResponse().getContentAsString();
 		Assertions.assertEquals(200, status);
 
-		System.out.println("payload: " + payload);
+		System.out.println("payload: " + response);
 
 	}
 
